@@ -1,0 +1,161 @@
+{
+	"$schema": "https://playground.wordpress.net/blueprint-schema.json",
+	"meta": {
+		"title": "Packaging Fit Demo",
+		"description": "A Woo store with Packaging Fit Plugin, Products and Orders.",
+		"author": "TigriWeb"
+	},
+	"landingPage": "/wp-admin/admin.php?page=wc-orders",
+	"preferredVersions": {
+		"php": "latest",
+		"wp": "latest"
+	},
+	"features": {
+		"networking": true
+	},
+	"steps": [
+		{
+			"step": "resetData"
+		},
+		{
+			"step": "login"
+		},
+		{
+			"step": "writeFile",
+			"path": "/wordpress/wp-content/mu-plugins/rewrite.php",
+			"data": "<?php /* Use pretty permalinks */ add_action( 'after_setup_theme', function() { global $wp_rewrite; $wp_rewrite->set_permalink_structure('/%postname%/'); $wp_rewrite->flush_rules(); } );"
+		},
+		{
+			"step": "setSiteOptions",
+			"options": {
+				"blogname": "Packaging Fit Demo",
+				"woocommerce_store_city": "WrocÅaw",
+				"woocommerce_store_address": "Wichrowa",
+				"woocommerce_store_postcode": "53-027",
+				"woocommerce_default_country": "Poland",
+				"woocommerce_onboarding_profile": {
+					"skipped": true
+				},
+				"woocommerce_currency": "USD",
+				"woocommerce_weight_unit": "kg",
+				"woocommerce_dimension_unit": "cm",
+				"woocommerce_custom_orders_table_enabled": "no",
+				"woocommerce_analytics_enabled": "no",
+				"woocommerce_show_marketplace_suggestions": "no",
+				"woocommerce_task_list_hidden": "yes",
+				"woocommerce_task_list_complete": "yes",
+				"woocommerce_task_list_welcome_modal_dismissed": "yes",
+				"woocommerce_task_list_reminder_bar_hidden": "yes",
+				"woocommerce_task_list_prompt_shown": "no",
+				"woocommerce_allow_tracking": "no",
+				"woocommerce_cheque_settings": {
+					"enabled": "yes"
+				},
+				"twpf_options": {
+					"groups": {
+						"1722796023051": {
+							"name": "DPD",
+							"packages": {
+								"1722796047561": {
+									"name": "XS",
+									"price": "10",
+									"package_weight": "0.01",
+									"weight": "3",
+									"height": "40",
+									"width": "23",
+									"length": "4",
+									"free_space": ""
+								},
+								"1722796331501": {
+									"name": "S",
+									"price": "14",
+									"package_weight": "0.01",
+									"weight": "25",
+									"height": "64",
+									"width": "38",
+									"length": "8",
+									"free_space": ""
+								},
+								"1722796539277": {
+									"name": "M",
+									"price": "18",
+									"package_weight": "0.01",
+									"weight": "25",
+									"height": "64",
+									"width": "38",
+									"length": "19",
+									"free_space": ""
+								},
+								"1722798677088": {
+									"name": "L",
+									"price": "22",
+									"package_weight": "0.01",
+									"weight": "25",
+									"height": "64",
+									"width": "38",
+									"length": "41",
+									"free_space": ""
+								}
+							}
+						},
+						"1722799025102": {
+							"name": "FEDEX",
+							"packages": {
+								"1722799028146": {
+									"name": "PALETE",
+									"price": "200",
+									"package_weight": "50",
+									"weight": "1000",
+									"height": "500",
+									"width": "500",
+									"length": "500",
+									"free_space": ""
+								}
+							}
+						}
+					},
+					"menu_location": "separate",
+					"allow_rotation": "2",
+					"free_space": "0",
+					"free_space_product": "0"
+				}
+			}
+		},
+		{
+			"step": "installPlugin",
+			"pluginData": {
+				"resource": "wordpress.org/plugins",
+				"slug": "woocommerce"
+			},
+			"options": {
+				"activate": true
+			}
+		},
+		{
+			"step": "installPlugin",
+			"pluginData": {
+				"resource": "wordpress.org/plugins",
+				"slug": "packaging-fit"
+			},
+			"options": {
+				"activate": true
+			}
+		},
+		{
+			"step": "importWxr",
+			"file": {
+				"resource": "url",
+				"url": "https://raw.githubusercontent.com/tigriweb/blueprints/master/packaging-fit/v1.1/assets/content/products.wxr"
+			}
+		},
+		{
+			"step": "runPHP",
+			"code": "<?php include 'wordpress/wp-load.php'; delete_transient( '_wc_activation_redirect' );"
+		},
+		{
+			"step": "runPHP",
+			"code": "<?php include 'wordpress/wp-load.php'; $order = wc_create_order(); $order->add_product( wc_get_product( 100 ), 2 ); $order->add_product( wc_get_product( 101 ), 5 ); $order->set_address( array( 'first_name' => 'Simple', 'last_name'  => 'Test' ), 'billing' ); $order->save();"
+		}
+	],
+	"login": true
+}
